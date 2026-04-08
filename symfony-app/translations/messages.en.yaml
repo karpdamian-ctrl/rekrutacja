@@ -1,0 +1,60 @@
+app:
+    meta:
+        title: 'Symfony App'
+    header:
+        title: 'Symfony App'
+        subtitle: 'Discover amazing photography from our community'
+
+security:
+    csrf:
+        invalid: 'Invalid CSRF token'
+        invalid_json: 'Invalid CSRF token.'
+
+auth:
+    login:
+        page_title: 'Login - Symfony App'
+        heading: 'Login'
+        subtitle: 'Provide your username and access token to sign in.'
+        username: 'Username'
+        token: 'Token'
+        action: 'Login'
+        required_fields: 'Username and token are required.'
+        invalid_credentials: 'Invalid username or token.'
+        success: 'Welcome back, %username%!'
+    logout:
+        action: 'Logout'
+        success: 'You have been logged out successfully.'
+
+photo:
+    description:
+        missing: 'No description provided'
+    meta:
+        location: 'Location'
+        camera: 'Camera'
+    empty:
+        title: 'No photos yet'
+        subtitle: 'Be the first to share your photography!'
+    like:
+        login_required: 'You must be logged in to like photos.'
+        login_hint: 'Login to like'
+    unlike:
+        login_required: 'You must be logged in to unlike photos.'
+    reaction:
+        not_found: 'Photo not found.'
+        liked: 'Photo liked!'
+        already_liked: 'Photo already liked.'
+        unliked: 'Photo unliked!'
+        not_liked_yet: 'Photo is not liked yet.'
+
+profile:
+    navigation:
+        link: 'My Profile'
+        back_to_gallery: 'Back to Gallery'
+    field:
+        email: 'Email'
+        age: 'Age'
+        age_value: '%age% years old'
+        full_name: 'Full Name'
+        about_me: 'About Me'
+    stats:
+        photos: 'Photos'

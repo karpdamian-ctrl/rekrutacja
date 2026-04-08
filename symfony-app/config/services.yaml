@@ -3,8 +3,11 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Likes\LikeRepositoryInterface: '@App\Likes\LikeRepository'
+
     App\:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
+            - '../src/Controller/AppController.php'
             - '../src/Likes/DuplicateLikeException.php'

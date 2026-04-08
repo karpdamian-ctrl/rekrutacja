@@ -166,20 +166,20 @@
         
         <div class="profile-details">
             <div class="profile-field">
-                <div class="profile-field-label">Email</div>
+                <div class="profile-field-label">{{ 'profile.field.email'|trans }}</div>
                 <div class="profile-field-value">{{ user.email }}</div>
             </div>
             
             {% if user.age %}
                 <div class="profile-field">
-                    <div class="profile-field-label">Age</div>
-                    <div class="profile-field-value">{{ user.age }} years old</div>
+                    <div class="profile-field-label">{{ 'profile.field.age'|trans }}</div>
+                    <div class="profile-field-value">{{ 'profile.field.age_value'|trans({'%age%': user.age}) }}</div>
                 </div>
             {% endif %}
             
             {% if user.name %}
                 <div class="profile-field">
-                    <div class="profile-field-label">Full Name</div>
+                    <div class="profile-field-label">{{ 'profile.field.full_name'|trans }}</div>
                     <div class="profile-field-value">
                         {{ user.name }}
                         {% if user.lastName %}
@@ -192,7 +192,7 @@
         
         {% if user.bio %}
             <div class="profile-bio">
-                <div class="profile-bio-label">About Me</div>
+                <div class="profile-bio-label">{{ 'profile.field.about_me'|trans }}</div>
                 <div class="profile-bio-text">{{ user.bio }}</div>
             </div>
         {% endif %}
@@ -200,13 +200,12 @@
         <div class="profile-stats">
             <div class="stat-item">
                 <div class="stat-number">{{ user.photos|length }}</div>
-                <div class="stat-label">Photos</div>
+                <div class="stat-label">{{ 'profile.stats.photos'|trans }}</div>
             </div>
         </div>
         
         <div style="text-align: center;">
-            <a href="{{ path('home') }}" class="back-button">← Back to Gallery</a>
+            <a href="{{ path('home') }}" class="back-button">← {{ 'profile.navigation.back_to_gallery'|trans }}</a>
         </div>
     </div>
 {% endblock %}
-

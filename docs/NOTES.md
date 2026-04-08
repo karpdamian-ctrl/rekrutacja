@@ -14,6 +14,11 @@
 - Uprościłem też warstwę lajków, usuwając ukryty stan z repozytorium. Zamiast ustawiać użytkownika metodą `setUser()`, przekazuję go teraz jawnie do metod repozytorium i serwisu.
 - Dodałem również ochronę CSRF dla akcji `like` i `unlike` oraz testy sprawdzające brak i niepoprawny token.
 - Na tym etapie zostawiam obsługę tego flow w kontrolerze, ponieważ logika nie jest jeszcze skomplikowana. Głębszy refaktor do osobnych klas typu action/use case miałby większy sens przy większej liczbie podobnych endpointów i rozwijaniu kolejnych requestów w tym obszarze.
+- Naprawiam też błąd logowania, w którym dowolny poprawny token pozwalał zalogować dowolnego użytkownika. Logowanie wymaga teraz poprawnego spięcia konkretnego tokenu z konkretnym użytkownikiem i jest pokryte testami.
+- Przeniosłem też logowanie z linku `GET` na osobną podstronę z formularzem `POST` zabezpieczonym CSRF. W ten sam sposób przerobiłem wylogowanie, które zamiast zwykłego linku działa teraz jako `POST` z własnym tokenem CSRF.
+- Wydzieliłem też część wspólną dla kontrolerów do bazowej klasy, żeby nie powielać logiki pobierania aktualnego użytkownika z sesji. Korzystają z tego teraz kontrolery auth, home, profile i photo.
+- Po dalszym uporządkowaniu wydzieliłem odpowiedzialności do serwisów, tak aby kontrolery zostały możliwie cienkie i pełniły głównie rolę warstwy HTTP: przyjęcie requestu, walidacja wejścia, delegacja do serwisu i zwrócenie odpowiedzi.
+- Wyniosłem też komunikaty do pliku tłumaczeń. To była prosta operacja, a w prawdziwym projekcie bardzo szybko mogłaby pojawić się potrzeba obsługi wielu języków, więc chciałem od razu przygotować kod pod taki scenariusz.
 
 ## Jak używam AI
 

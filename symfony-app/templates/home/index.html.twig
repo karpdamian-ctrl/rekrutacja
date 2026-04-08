@@ -188,7 +188,7 @@
                                 </button>
                             </div>
                         {% else %}
-                            <span class="like-button disabled" title="Login to like">
+                            <span class="like-button disabled" title="{{ 'photo.like.login_hint'|trans }}">
                                 🤍
                                 <span>{{ photo.likeCounter }}</span>
                             </span>
@@ -196,21 +196,21 @@
                     </div>
                     <div class="photo-info">
                         <div class="photo-description">
-                            {{ photo.description|default('No description provided') }}
+                            {{ photo.description|default('photo.description.missing'|trans) }}
                         </div>
                         
                         <div class="photo-meta">
                             {% if photo.location %}
                                 <div class="photo-meta-item">
                                     <span>📍</span>
-                                    <strong>Location:</strong> {{ photo.location }}
+                                    <strong>{{ 'photo.meta.location'|trans }}:</strong> {{ photo.location }}
                                 </div>
                             {% endif %}
                             
                             {% if photo.camera %}
                                 <div class="photo-meta-item">
                                     <span>📷</span>
-                                    <strong>Camera:</strong> {{ photo.camera }}
+                                    <strong>{{ 'photo.meta.camera'|trans }}:</strong> {{ photo.camera }}
                                 </div>
                             {% endif %}
                         </div>
@@ -236,8 +236,8 @@
         </div>
     {% else %}
         <div class="empty-state">
-            <h2>📷 No photos yet</h2>
-            <p>Be the first to share your photography!</p>
+            <h2>📷 {{ 'photo.empty.title'|trans }}</h2>
+            <p>{{ 'photo.empty.subtitle'|trans }}</p>
         </div>
     {% endif %}
 

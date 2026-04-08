@@ -18,6 +18,7 @@
     "symfony/security-csrf": "^6.4",
     "symfony/serializer": "^6.4",
     "symfony/skeleton": "6.4.*",
+    "symfony/translation": "^6.4",
     "symfony/twig-bundle": "^6.4",
     "symfony/validator": "^6.4",
     "symfony/yaml": "^6.4"
@@ -33,10 +34,9 @@
   },
   "autoload": {
     "psr-4": {
-      "App\\\\": "src/"
+      "App\\": "src/"
     },
     "classmap": [
-      "src/",
       "migrations/"
     ]
   },
@@ -49,7 +49,7 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "phpstan": "phpstan analyse",
+    "phpstan": "php -d memory_limit=512M vendor/bin/phpstan analyse",
     "php-cs-fixer": "php-cs-fixer fix --dry-run --diff",
     "auto-scripts": {
       "cache:clear": "symfony-cmd",

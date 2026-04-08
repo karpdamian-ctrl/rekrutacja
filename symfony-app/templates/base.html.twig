@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Symfony App{% endblock %}</title>
+    <title>{% block title %}{{ 'app.meta.title'|trans }}{% endblock %}</title>
     <style>
         * {
             margin: 0;
@@ -27,6 +27,12 @@
             text-align: center;
             color: white;
             margin-bottom: 40px;
+        }
+
+        .header-link {
+            color: inherit;
+            text-decoration: none;
+            display: inline-block;
         }
         
         header h1 {
@@ -107,6 +113,31 @@
         .profile-dropdown a:hover {
             background: #f8f9fa;
         }
+
+        .profile-dropdown form {
+            margin: 0;
+        }
+
+        .profile-dropdown button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            color: #333;
+            background: transparent;
+            border: 0;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 14px;
+        }
+
+        .profile-dropdown button:hover {
+            background: #f8f9fa;
+        }
+
+        .profile-dropdown form:last-child button {
+            border-radius: 0 0 12px 12px;
+        }
         
         .profile-dropdown-separator {
             height: 1px;
@@ -185,25 +216,35 @@
     
     {% if app.session.get('user_id') %}
         <div class="profile-menu">
-            <a href="{{ path('profile') }}" class="profile-icon" title="My Profile">
+            <a href="{{ path('profile') }}" class="profile-icon" title="{{ 'profile.navigation.link'|trans }}">
                 👤
             </a>
             <div class="profile-dropdown">
-                <a href="{{ path('profile') }}">👤 My Profile</a>
+                <a href="{{ path('profile') }}">👤 {{ 'profile.navigation.link'|trans }}</a>
                 <div class="profile-dropdown-separator"></div>
-                <a href="{{ path('logout') }}">🚪 Logout</a>
+                <form method="post" action="{{ path('logout') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('logout') }}">
+                    <button type="submit">🚪 {{ 'auth.logout.action'|trans }}</button>
+                </form>
             </div>
+        </div>
+    {% else %}
+        <div class="profile-menu">
+            <a href="{{ path('auth_login_form') }}" class="profile-icon" title="{{ 'auth.login.action'|trans }}">
+                🔐
+            </a>
         </div>
     {% endif %}
     
     <div class="container">
         <header>
-            <h1>📸 Symfony App</h1>
-            <p>Discover amazing photography from our community</p>
+            <a href="{{ path('home') }}" class="header-link">
+                <h1>📸 {{ 'app.header.title'|trans }}</h1>
+                <p>{{ 'app.header.subtitle'|trans }}</p>
+            </a>
         </header>
         
         {% block body %}{% endblock %}
     </div>
 </body>
 </html>
-

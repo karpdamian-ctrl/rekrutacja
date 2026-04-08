@@ -4,49 +4,67 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Doctrine\DBAL\Connection;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\AuthService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AuthController extends AbstractController
+class AuthController extends AppController
 {
-    #[Route('/auth/{username}/{token}', name: 'auth_login')]
-    public function login(string $username, string $token, Connection $connection, Request $request): Response
+    private const LOGIN_CSRF_TOKEN_ID = 'login';
+    private const LOGOUT_CSRF_TOKEN_ID = 'logout';
+
+    #[Route('/login', name: 'auth_login_form', methods: ['GET'])]
+    public function showLoginForm(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $sql = "SELECT * FROM auth_tokens WHERE token = '$token'";
-        $result = $connection->executeQuery($sql);
-        $tokenData = $result->fetchAssociative();
-
-        if (!$tokenData) {
-            return new Response('Invalid token', 401);
+        if ($this->resolveCurrentUser($request, $entityManager, true)) {
+            return $this->redirectToRoute('home');
         }
 
-        $userSql = "SELECT * FROM users WHERE username = '$username'";
-        $userResult = $connection->executeQuery($userSql);
-        $userData = $userResult->fetchAssociative();
+        return $this->render('auth/login.html.twig');
+    }
 
-        if (!$userData) {
-            return new Response('User not found', 404);
+    #[Route('/login', name: 'auth_login', methods: ['POST'])]
+    public function login(Request $request, AuthService $authService): Response
+    {
+        $username = trim((string) $request->request->get('username', ''));
+        $token = trim((string) $request->request->get('token', ''));
+
+        if (!$this->hasValidCsrfToken($request, self::LOGIN_CSRF_TOKEN_ID)) {
+            return new Response($this->translate('security.csrf.invalid'), Response::HTTP_FORBIDDEN);
         }
 
-        $session = $request->getSession();
-        $session->set('user_id', $userData['id']);
-        $session->set('username', $username);
+        if ($username === '' || $token === '') {
+            $this->addFlash('error', $this->translate('auth.login.required_fields'));
 
-        $this->addFlash('success', 'Welcome back, ' . $username . '!');
+            return $this->redirectToRoute('auth_login_form');
+        }
+
+        $user = $authService->authenticate($username, $token);
+        if (!$user) {
+            $this->addFlash('error', $this->translate('auth.login.invalid_credentials'));
+
+            return $this->redirectToRoute('auth_login_form');
+        }
+
+        $authService->logIn($request->getSession(), $user);
+
+        $this->addFlash('success', $this->translate('auth.login.success', ['%username%' => $user->getUsername()]));
 
         return $this->redirectToRoute('home');
     }
 
-    #[Route('/logout', name: 'logout')]
-    public function logout(Request $request): Response
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
+    public function logout(Request $request, AuthService $authService): Response
     {
-        $session = $request->getSession();
-        $session->clear();
+        if (!$this->hasValidCsrfToken($request, self::LOGOUT_CSRF_TOKEN_ID)) {
+            return new Response($this->translate('security.csrf.invalid'), Response::HTTP_FORBIDDEN);
+        }
 
-        $this->addFlash('info', 'You have been logged out successfully.');
+        $authService->logOut($request->getSession());
+
+        $this->addFlash('info', $this->translate('auth.logout.success'));
 
         return $this->redirectToRoute('home');
     }

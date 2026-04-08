@@ -21,9 +21,9 @@ class LikeService
             $this->likeRepository->createLike($user, $photo);
             $this->likeRepository->updatePhotoCounter($photo, 1);
         } catch (UniqueConstraintViolationException $e) {
-            throw new DuplicateLikeException('Photo already liked.', 0, $e);
+            throw new DuplicateLikeException(previous: $e);
         } catch (\Throwable $e) {
-            throw new \Exception('Something went wrong while liking the photo');
+            throw new \RuntimeException(previous: $e);
         }
     }
 }
