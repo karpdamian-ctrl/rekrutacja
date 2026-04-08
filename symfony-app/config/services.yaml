@@ -9,5 +9,5 @@ services:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
-            - '../src/Controller/AppController.php'
+            - '../src/Shared/Controller/AppController.php'
             - '../src/Likes/DuplicateLikeException.php'

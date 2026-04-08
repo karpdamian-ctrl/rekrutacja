@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Auth\Controller;
 
-use App\Service\AuthService;
+use App\Auth\Service\AuthService;
+use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

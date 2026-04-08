@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Home\Controller;
 
 use App\Likes\LikeRepositoryInterface;
-use App\Repository\PhotoRepository;
+use App\Photo\Repository\PhotoRepository;
+use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

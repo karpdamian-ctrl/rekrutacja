@@ -1,6 +1,23 @@
-# Define your routes here
-controllers:
+home_controllers:
     resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+        path: ../src/Home/Controller/
+        namespace: App\Home\Controller
+    type: attribute
+
+auth_controllers:
+    resource:
+        path: ../src/Auth/Controller/
+        namespace: App\Auth\Controller
+    type: attribute
+
+photo_controllers:
+    resource:
+        path: ../src/Photo/Controller/
+        namespace: App\Photo\Controller
+    type: attribute
+
+profile_controllers:
+    resource:
+        path: ../src/Profile/Controller/
+        namespace: App\Profile\Controller
     type: attribute

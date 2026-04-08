@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use App\Auth\Service\AuthService;
 use App\Entity\AuthToken;
 use App\Entity\User;
-use App\Service\AuthService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;

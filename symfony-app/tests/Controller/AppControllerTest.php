@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\Controller\AppController;
 use App\Entity\User;
+use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;

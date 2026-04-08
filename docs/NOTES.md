@@ -11,7 +11,7 @@
 - W ramach porządkowania SymfonyApp zmieniam akcję like z `GET` na `POST` i rozdzielam ją na dwie osobne operacje: `like` oraz `unlike`.
 - Poprzedni toggle był słabym rozwiązaniem, bo jedna akcja wykonywała dwie różne operacje zależnie od aktualnego stanu. To utrudniało czytelność kodu, testowanie i dalszą rozbudowę logiki. Dodatkowo użytkownik, wykonując konkretną i świadomą akcję, mógłby ją nieświadomie cofnąć przez opóźnienie internetu albo podwójne kliknięcie.
 - Zauważyłem brak indeksu unikalnego dla lajków. Dodałem go na poziomie bazy, obsłużyłem przypadek podwójnego lajka w kodzie i dopisałem do tego testy.
-- Uprościłem też warstwę lajków, usuwając ukryty stan z repozytorium. Zamiast ustawiać użytkownika metodą `setUser()`, przekazuję go teraz jawnie do metod repozytorium i serwisu.
+- Uprościłem też warstwę lajków, tak aby metody repozytorium i serwisu dostawały użytkownika wprost w argumentach. Dzięki temu kod jest czytelniejszy i nie zależy od wcześniejszego ustawiania użytkownika „gdzieś obok”.
 - Dodałem również ochronę CSRF dla akcji `like` i `unlike` oraz testy sprawdzające brak i niepoprawny token.
 - Na tym etapie zostawiam obsługę tego flow w kontrolerze, ponieważ logika nie jest jeszcze skomplikowana. Głębszy refaktor do osobnych klas typu action/use case miałby większy sens przy większej liczbie podobnych endpointów i rozwijaniu kolejnych requestów w tym obszarze.
 - Naprawiam też błąd logowania, w którym dowolny poprawny token pozwalał zalogować dowolnego użytkownika. Logowanie wymaga teraz poprawnego spięcia konkretnego tokenu z konkretnym użytkownikiem i jest pokryte testami.
@@ -19,6 +19,22 @@
 - Wydzieliłem też część wspólną dla kontrolerów do bazowej klasy, żeby nie powielać logiki pobierania aktualnego użytkownika z sesji. Korzystają z tego teraz kontrolery auth, home, profile i photo.
 - Po dalszym uporządkowaniu wydzieliłem odpowiedzialności do serwisów, tak aby kontrolery zostały możliwie cienkie i pełniły głównie rolę warstwy HTTP: przyjęcie requestu, walidacja wejścia, delegacja do serwisu i zwrócenie odpowiedzi.
 - Wyniosłem też komunikaty do pliku tłumaczeń. To była prosta operacja, a w prawdziwym projekcie bardzo szybko mogłaby pojawić się potrzeba obsługi wielu języków, więc chciałem od razu przygotować kod pod taki scenariusz.
+- Ułożyłem też kod SymfonyApp w bardziej modułowy sposób, rozdzielając pliki na obszary `Home`, `Auth`, `Photo`, `Profile`, `Shared` i pozostawiając `Likes` jako osobny moduł.
+- Domknąłem również testy funkcjonalne dla wszystkich kontrolerów, tak aby każdy kontroler w projekcie miał własne pokrycie testowe.
+
+## Zadanie 1 - najważniejsze wprowadzone poprawki
+
+- Rozdzieliłem akcję `like/unlike` na dwa osobne endpointy `POST`, zamiast wcześniejszego nieczytelnego toggle zależnego od stanu.
+- Dodałem ochronę CSRF dla logowania, wylogowania oraz operacji `like/unlike`, razem z testami pokrywającymi brak i niepoprawny token.
+- Naprawiłem błąd logowania, w którym poprawny token pozwalał zalogować dowolnego użytkownika. Logowanie wymaga teraz poprawnego powiązania konkretnego tokenu z konkretnym użytkownikiem.
+- Przeniosłem logikę biznesową z kontrolerów do serwisów (`AuthService`, `PhotoReactionService`), a kontrolery zostawiłem jako cienką warstwę HTTP.
+- Wydzieliłem wspólne elementy warstwy kontrolerów do `AppController`, żeby nie duplikować logiki pobierania użytkownika z sesji, walidacji CSRF i tłumaczeń.
+- Dodałem indeks unikalny dla lajków na poziomie bazy i obsłużyłem przypadek podwójnego lajka po stronie aplikacji.
+- Uprościłem repozytorium lajków, tak aby użytkownik był przekazywany jawnie do metod repozytorium i serwisu, zamiast być ustawiany wcześniej w mniej oczywisty sposób.
+- Wyniosłem komunikaty do pliku tłumaczeń, żeby przygotować projekt pod łatwiejszą rozbudowę o kolejne języki.
+- Dodałem i rozszerzyłem testy funkcjonalne oraz jednostkowe dla auth, reakcji na zdjęcia i bazowego kontrolera.
+- Uporządkowałem strukturę plików w bardziej modułowy układ, żeby kod był czytelniejszy i łatwiejszy do rozwijania wraz z kolejnymi obszarami aplikacji.
+- Dopisałem testy dla wszystkich kontrolerów, tak aby cały layer HTTP w SymfonyApp miał pokrycie testowe.
 
 ## Jak używam AI
 

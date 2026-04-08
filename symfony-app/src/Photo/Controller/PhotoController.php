@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Photo\Controller;
 
 use App\Entity\Photo;
 use App\Entity\User;
-use App\Service\PhotoReactionResult;
-use App\Service\PhotoReactionService;
+use App\Photo\Service\PhotoReactionResult;
+use App\Photo\Service\PhotoReactionService;
+use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

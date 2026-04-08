@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Likes\DuplicateLikeException;
 use App\Likes\LikeRepositoryInterface;
 use App\Likes\LikeService;
-use App\Service\PhotoReactionService;
+use App\Photo\Service\PhotoReactionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Auth\Service;
 
 use App\Entity\AuthToken;
 use App\Entity\User;
