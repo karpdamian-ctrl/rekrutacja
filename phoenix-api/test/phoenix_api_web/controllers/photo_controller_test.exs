@@ -61,7 +61,11 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
   end
 
   describe "GET /api/photos" do
-    test "returns only default fields for authenticated user", %{conn: conn, photo1: photo1, photo2: photo2} do
+    test "returns only default fields for authenticated user", %{
+      conn: conn,
+      photo1: photo1,
+      photo2: photo2
+    } do
       conn =
         conn
         |> put_req_header("access-token", "valid_test_token_123")
@@ -79,7 +83,9 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
       conn =
         conn
         |> put_req_header("access-token", "valid_test_token_123")
-        |> get("/api/photos?fields=camera,lens,description,location,settings,focal_length,aperture,shutter_speed,iso,taken_at")
+        |> get(
+          "/api/photos?fields=camera,lens,description,location,settings,focal_length,aperture,shutter_speed,iso,taken_at"
+        )
 
       response = json_response(conn, 200)
       photos = response["photos"]
@@ -87,6 +93,7 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
       refute photos == []
 
       first_photo = List.first(photos)
+
       assert Map.keys(first_photo) |> Enum.sort() == [
                "aperture",
                "camera",
@@ -101,6 +108,7 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
                "shutter_speed",
                "taken_at"
              ]
+
       assert first_photo["id"] == photo1.id
       assert first_photo["photo_url"] == photo1.photo_url
       assert first_photo["camera"] == photo1.camera
