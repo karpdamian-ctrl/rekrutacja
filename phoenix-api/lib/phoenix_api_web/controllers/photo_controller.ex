@@ -5,7 +5,7 @@ defmodule PhoenixApiWeb.PhotoController do
   alias PhoenixApi.Media.Photo
   import Ecto.Query
 
-  plug PhoenixApiWeb.Plugs.Authenticate
+  plug(PhoenixApiWeb.Plugs.Authenticate)
 
   def index(conn, _params) do
     current_user = conn.assigns.current_user

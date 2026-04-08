@@ -3,19 +3,19 @@ defmodule PhoenixApi.Media.Photo do
   import Ecto.Changeset
 
   schema "photos" do
-    field :photo_url, :string
-    field :camera, :string
-    field :lens, :string
-    field :settings, :string
-    field :description, :string
-    field :location, :string
-    field :focal_length, :string
-    field :aperture, :string
-    field :shutter_speed, :string
-    field :iso, :integer
-    field :taken_at, :utc_datetime
+    field(:photo_url, :string)
+    field(:camera, :string)
+    field(:lens, :string)
+    field(:settings, :string)
+    field(:description, :string)
+    field(:location, :string)
+    field(:focal_length, :string)
+    field(:aperture, :string)
+    field(:shutter_speed, :string)
+    field(:iso, :integer)
+    field(:taken_at, :utc_datetime)
 
-    belongs_to :user, PhoenixApi.Accounts.User
+    belongs_to(:user, PhoenixApi.Accounts.User)
 
     timestamps()
   end
@@ -41,4 +41,3 @@ defmodule PhoenixApi.Media.Photo do
     |> foreign_key_constraint(:user_id)
   end
 end
-

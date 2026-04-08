@@ -3,9 +3,9 @@ defmodule PhoenixApi.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :api_token, :string
+    field(:api_token, :string)
 
-    has_many :photos, PhoenixApi.Media.Photo
+    has_many(:photos, PhoenixApi.Media.Photo)
 
     timestamps()
   end

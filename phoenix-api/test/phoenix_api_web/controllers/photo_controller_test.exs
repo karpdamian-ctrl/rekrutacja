@@ -93,7 +93,7 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
     end
 
     test "returns empty array when user has no photos", %{conn: conn} do
-      new_user =
+      _new_user =
         %User{}
         |> User.changeset(%{api_token: "new_user_token"})
         |> Repo.insert!()

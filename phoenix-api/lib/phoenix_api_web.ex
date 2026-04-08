@@ -5,6 +5,7 @@ defmodule PhoenixApiWeb do
         namespace: PhoenixApiWeb,
         formats: [:json],
         layouts: []
+
       import Plug.Conn
       alias PhoenixApiWeb.Router.Helpers, as: Routes
     end

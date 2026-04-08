@@ -6,7 +6,8 @@ defmodule PhoenixApiWeb.ConnCase do
 
   using do
     quote do
-      use Phoenix.ConnTest
+      import Plug.Conn
+      import Phoenix.ConnTest
       import PhoenixApiWeb.Router.Helpers
 
       alias PhoenixApiWeb.Router.Helpers, as: Routes

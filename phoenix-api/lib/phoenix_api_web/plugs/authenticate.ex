@@ -30,4 +30,3 @@ defmodule PhoenixApiWeb.Plugs.Authenticate do
     end
   end
 end
-

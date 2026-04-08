@@ -10,7 +10,6 @@ use App\Repository\PhotoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +18,6 @@ class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="home")
-     * @return JsonResponse
      */
     public function index(Request $request, EntityManagerInterface $em, ManagerRegistry $managerRegistry): Response
     {

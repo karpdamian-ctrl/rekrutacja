@@ -35,6 +35,7 @@ class User
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $bio = null;
 
+    /** @var Collection<int, Photo> */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Photo::class, cascade: ['persist', 'remove'])]
     private Collection $photos;
 
