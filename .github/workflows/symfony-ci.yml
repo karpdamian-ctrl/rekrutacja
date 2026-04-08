@@ -1,0 +1,173 @@
+name: Symfony CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  symfony-test:
+    name: Symfony test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: symfony_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d symfony_app"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    defaults:
+      run:
+        working-directory: symfony-app
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app
+      TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_pgsql
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare test database
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:migrations:migrate --env=test --no-interaction
+
+      - name: Run PHPUnit
+        run: composer test
+
+  symfony-coverage:
+    name: Symfony coverage
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: symfony_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d symfony_app"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    defaults:
+      run:
+        working-directory: symfony-app
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app
+      TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_pgsql
+          tools: composer
+          coverage: pcov
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare test database
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:migrations:migrate --env=test --no-interaction
+
+      - name: Run PHPUnit with coverage
+        run: php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover coverage.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./symfony-app/coverage.xml
+          flags: symfony
+
+  symfony-phpstan:
+    name: Symfony PHPStan
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: symfony-app
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app
+      TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_pgsql
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        run: composer phpstan
+
+  symfony-php-cs-fixer:
+    name: Symfony PHP CS Fixer
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: symfony-app
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app
+      TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/symfony_app_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_pgsql
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHP CS Fixer
+        run: composer php-cs-fixer

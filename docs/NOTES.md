@@ -22,6 +22,8 @@
 - Ułożyłem też kod SymfonyApp w bardziej modułowy sposób, rozdzielając pliki na obszary `Home`, `Auth`, `Photo`, `Profile`, `Shared` i pozostawiając `Likes` jako osobny moduł.
 - Domknąłem również testy funkcjonalne dla wszystkich kontrolerów, tak aby każdy kontroler w projekcie miał własne pokrycie testowe.
 - Dodałem też interfejsy dla serwisów i repozytoriów tam, gdzie miało to sens, a następnie przepiąłem dependency injection na kontrakty zamiast konkretnych implementacji.
+- Doinstalowałem `pcov` do obrazu Symfony w `Dockerfile`, żeby móc generować pokrycie testami w kontenerze. W większym projekcie rozdzieliłbym obrazy bardziej precyzyjnie na środowiska dev/test/prod, ale na obecnym etapie byłoby to przerostem formy nad treścią.
+- Dodałem do `README` badge'e pokazujące status pipeline'ów oraz pokrycie testami dla Symfony i Phoenix, tak aby jakość projektu była widoczna od razu z poziomu repozytorium.
 
 ## Zadanie 1 - najważniejsze wprowadzone poprawki
 

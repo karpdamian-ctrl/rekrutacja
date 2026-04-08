@@ -1,8 +1,10 @@
 FROM php:8.1-cli as base
 FROM base as dev
 
-RUN apt-get update && apt-get install -y git unzip libpq-dev libxml2-dev \
-    && docker-php-ext-install pdo pdo_pgsql xml
+RUN apt-get update && apt-get install -y git unzip libpq-dev libxml2-dev $PHPIZE_DEPS \
+    && docker-php-ext-install pdo pdo_pgsql xml \
+    && pecl install pcov \
+    && docker-php-ext-enable pcov
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
