@@ -1,10 +1,7 @@
-Testy Symfony: [![Symfony CI](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/symfony-ci.yml/badge.svg)](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/symfony-ci.yml)
-
-Pokrycie testami Symfony: [![Coverage](https://codecov.io/gh/karpdamian-ctrl/rekrutacja/branch/master/graph/badge.svg?flag=symfony)](https://codecov.io/gh/karpdamian-ctrl/rekrutacja)
-
-Testy Phoenix: [![Phoenix CI](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/phoenix-ci.yml/badge.svg)](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/phoenix-ci.yml)
-
-Pokrycie testami Phoenix: [![Coverage](https://codecov.io/gh/karpdamian-ctrl/rekrutacja/branch/master/graph/badge.svg?flag=phoenix)](https://codecov.io/gh/karpdamian-ctrl/rekrutacja)
+| Aplikacja | CI | Coverage |
+|---|---|---|
+| Symfony | [![Symfony CI](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/symfony-ci.yml/badge.svg)](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/symfony-ci.yml) | [![Coverage](https://codecov.io/gh/karpdamian-ctrl/rekrutacja/branch/master/graph/badge.svg?flag=symfony)](https://codecov.io/gh/karpdamian-ctrl/rekrutacja) |
+| Phoenix | [![Phoenix CI](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/phoenix-ci.yml/badge.svg)](https://github.com/karpdamian-ctrl/rekrutacja/actions/workflows/phoenix-ci.yml) | [![Coverage](https://codecov.io/gh/karpdamian-ctrl/rekrutacja/branch/master/graph/badge.svg?flag=phoenix)](https://codecov.io/gh/karpdamian-ctrl/rekrutacja) |
 
 ## Architektura
 
