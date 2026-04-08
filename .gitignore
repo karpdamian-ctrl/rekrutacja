@@ -1,0 +1,39 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Dependencies
+**/deps/
+**/_build/
+**/node_modules/
+**/vendor/
+
+# Elixir / Erlang
+**/*.beam
+**/.elixir_ls/
+**/erl_crash.dump
+
+# Assets / compiled
+**/priv/static/
+
+# Logs / tmp
+**/log/
+**/tmp/
+**/var/
+**/.cache/
+
+# Environment / secrets
+.env
+**/.env.local
+**/.env.test
+**/.env.*.local
+
+# Coverage / reports
+**/cover/
+**/coverage/
+
+# Docker
+**/.volume/
+**/.docker/

@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+use App\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Dotenv\Dotenv;
+
+set_time_limit(0);
+
+require dirname(__DIR__).'/vendor/autoload.php';
+require dirname(__DIR__).'/config/bootstrap.php';
+
+if (!class_exists(Application::class)) {
+    throw new RuntimeException('You need to run "composer install" to run Symfony commands.');
+}
+
+$input = new ArgvInput();
+$env = $input->getParameterOption(['--env', '-e'], $_SERVER['APP_ENV'] ?? 'dev', true);
+$debug = (bool) ($_SERVER['APP_DEBUG'] ?? ('prod' !== $env));
+
+$kernel = new Kernel($env, $debug);
+$application = new Application($kernel);
+$application->run($input);

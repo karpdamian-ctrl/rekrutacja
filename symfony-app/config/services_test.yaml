@@ -1,0 +1,14 @@
+services:
+    App\Infrastructure\Http\PhoenixClient:
+        synthetic: true
+        public: true
+
+    App\Domain\Port\PhoenixClientInterface: '@App\Infrastructure\Http\PhoenixClient'
+
+    test.App\Infrastructure\Http\PhoenixClient:
+        alias: App\Infrastructure\Http\PhoenixClient
+        public: true
+
+    test.App\Domain\Port\PhoenixClientInterface:
+        alias: App\Domain\Port\PhoenixClientInterface
+        public: true

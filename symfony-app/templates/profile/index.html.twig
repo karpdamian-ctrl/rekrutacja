@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile - {{ user.username }}{% endblock %}
+
+{% block styles %}
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .profile-username {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .profile-handle {
+            font-size: 1.2em;
+            color: #999;
+        }
+        
+        .profile-details {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .profile-field {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .profile-field-label {
+            font-size: 0.85em;
+            color: #667eea;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .profile-field-value {
+            font-size: 1.1em;
+            color: #333;
+            word-wrap: break-word;
+        }
+        
+        .profile-field-empty {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .profile-bio {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #764ba2;
+            margin-top: 10px;
+        }
+        
+        .profile-bio-label {
+            font-size: 0.85em;
+            color: #764ba2;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .profile-bio-text {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ user.username|slice(0, 1)|upper }}
+            </div>
+            <h1 class="profile-username">
+                {% if user.name %}
+                    {{ user.name }} {{ user.lastName|default('') }}
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+            </h1>
+            <div class="profile-handle">@{{ user.username }}</div>
+        </div>
+        
+        <div class="profile-details">
+            <div class="profile-field">
+                <div class="profile-field-label">Email</div>
+                <div class="profile-field-value">{{ user.email }}</div>
+            </div>
+            
+            {% if user.age %}
+                <div class="profile-field">
+                    <div class="profile-field-label">Age</div>
+                    <div class="profile-field-value">{{ user.age }} years old</div>
+                </div>
+            {% endif %}
+            
+            {% if user.name %}
+                <div class="profile-field">
+                    <div class="profile-field-label">Full Name</div>
+                    <div class="profile-field-value">
+                        {{ user.name }}
+                        {% if user.lastName %}
+                            {{ user.lastName }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        {% if user.bio %}
+            <div class="profile-bio">
+                <div class="profile-bio-label">About Me</div>
+                <div class="profile-bio-text">{{ user.bio }}</div>
+            </div>
+        {% endif %}
+        
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-number">{{ user.photos|length }}</div>
+                <div class="stat-label">Photos</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{{ path('home') }}" class="back-button">← Back to Gallery</a>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,221 @@
+{% extends 'base.html.twig' %}
+
+{% block styles %}
+    <style>
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 380px);
+            gap: 40px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .photo-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .photo-image-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .photo-info {
+            padding: 20px;
+        }
+        
+        .like-button {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .like-button:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .like-button.liked {
+            background: #667eea;
+            color: white;
+        }
+        
+        .like-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .photo-description {
+            color: #333;
+            font-size: 1em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            min-height: 45px;
+        }
+        
+        .photo-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .photo-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .photo-meta-item strong {
+            color: #667eea;
+        }
+        
+        .author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .author-info {
+            flex: 1;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .author-username {
+            font-size: 0.85em;
+            color: #999;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+        }
+        
+        .empty-state h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% if photos|length > 0 %}
+        <div class="photo-grid">
+            {% for photo in photos %}
+                <div class="photo-card">
+                    <div class="photo-image-container">
+                        <img src="{{ photo.imageUrl }}" alt="{{ photo.description }}">
+                        {% if currentUser %}
+                            <a href="{{ path('photo_like', {id: photo.id}) }}" class="like-button {{ userLikes[photo.id] ? 'liked' : '' }}">
+                                {{ userLikes[photo.id] ? '❤️' : '🤍' }}
+                                <span>{{ photo.likeCounter }}</span>
+                            </a>
+                        {% else %}
+                            <span class="like-button disabled" title="Login to like">
+                                🤍
+                                <span>{{ photo.likeCounter }}</span>
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="photo-info">
+                        <div class="photo-description">
+                            {{ photo.description|default('No description provided') }}
+                        </div>
+                        
+                        <div class="photo-meta">
+                            {% if photo.location %}
+                                <div class="photo-meta-item">
+                                    <span>📍</span>
+                                    <strong>Location:</strong> {{ photo.location }}
+                                </div>
+                            {% endif %}
+                            
+                            {% if photo.camera %}
+                                <div class="photo-meta-item">
+                                    <span>📷</span>
+                                    <strong>Camera:</strong> {{ photo.camera }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="author">
+                            <div class="author-avatar">
+                                {{ photo.user.username|slice(0, 1)|upper }}
+                            </div>
+                            <div class="author-info">
+                                <div class="author-name">
+                                    {% if photo.user.name %}
+                                        {{ photo.user.name }} {{ photo.user.lastName|default('') }}
+                                    {% else %}
+                                        {{ photo.user.username }}
+                                    {% endif %}
+                                </div>
+                                <div class="author-username">@{{ photo.user.username }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>📷 No photos yet</h2>
+            <p>Be the first to share your photography!</p>
+        </div>
+    {% endif %}
+{% endblock %}
+
