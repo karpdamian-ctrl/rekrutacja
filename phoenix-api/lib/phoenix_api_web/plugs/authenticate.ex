@@ -1,4 +1,6 @@
 defmodule PhoenixApiWeb.Plugs.Authenticate do
+  @moduledoc false
+
   import Plug.Conn
   import Phoenix.Controller
   alias PhoenixApi.Repo

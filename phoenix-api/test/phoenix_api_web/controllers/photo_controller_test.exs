@@ -81,7 +81,7 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
       response = json_response(conn, 200)
       photos = response["photos"]
 
-      assert length(photos) > 0
+      refute photos == []
 
       first_photo = List.first(photos)
       assert Map.keys(first_photo) |> Enum.sort() == ["id", "photo_url"]
