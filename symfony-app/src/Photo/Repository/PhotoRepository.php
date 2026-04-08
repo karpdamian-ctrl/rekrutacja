@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Photo>
  */
-class PhotoRepository extends ServiceEntityRepository
+class PhotoRepository extends ServiceEntityRepository implements PhotoRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

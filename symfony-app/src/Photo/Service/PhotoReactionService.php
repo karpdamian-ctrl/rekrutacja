@@ -8,15 +8,15 @@ use App\Entity\Photo;
 use App\Entity\User;
 use App\Likes\DuplicateLikeException;
 use App\Likes\LikeRepositoryInterface;
-use App\Likes\LikeService;
+use App\Likes\LikeServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PhotoReactionService
+class PhotoReactionService implements PhotoReactionServiceInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly LikeRepositoryInterface $likeRepository,
-        private readonly LikeService $likeService
+        private readonly LikeServiceInterface $likeService
     ) {
     }
 

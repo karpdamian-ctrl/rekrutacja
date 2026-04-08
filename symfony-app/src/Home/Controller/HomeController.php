@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Home\Controller;
 
 use App\Likes\LikeRepositoryInterface;
-use App\Photo\Repository\PhotoRepository;
+use App\Photo\Repository\PhotoRepositoryInterface;
 use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ class HomeController extends AppController
     public function index(
         Request $request,
         EntityManagerInterface $em,
-        PhotoRepository $photoRepository,
+        PhotoRepositoryInterface $photoRepository,
         LikeRepositoryInterface $likeRepository
     ): Response {
         $photos = $photoRepository->findAllWithUsers();

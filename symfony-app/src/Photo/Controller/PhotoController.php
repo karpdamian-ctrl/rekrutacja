@@ -7,7 +7,7 @@ namespace App\Photo\Controller;
 use App\Entity\Photo;
 use App\Entity\User;
 use App\Photo\Service\PhotoReactionResult;
-use App\Photo\Service\PhotoReactionService;
+use App\Photo\Service\PhotoReactionServiceInterface;
 use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +19,7 @@ class PhotoController extends AppController
     private const LIKE_CSRF_TOKEN_ID = 'photo_like';
 
     #[Route('/photo/{id}/like', name: 'photo_like', methods: ['POST'])]
-    public function like(int $id, Request $request, EntityManagerInterface $em, PhotoReactionService $photoReactionService): JsonResponse
+    public function like(int $id, Request $request, EntityManagerInterface $em, PhotoReactionServiceInterface $photoReactionService): JsonResponse
     {
         $user = $this->resolveCurrentUser($request, $em);
         if (!$user instanceof User) {
@@ -36,7 +36,7 @@ class PhotoController extends AppController
     }
 
     #[Route('/photo/{id}/unlike', name: 'photo_unlike', methods: ['POST'])]
-    public function unlike(int $id, Request $request, EntityManagerInterface $em, PhotoReactionService $photoReactionService): JsonResponse
+    public function unlike(int $id, Request $request, EntityManagerInterface $em, PhotoReactionServiceInterface $photoReactionService): JsonResponse
     {
         $user = $this->resolveCurrentUser($request, $em);
         if (!$user instanceof User) {

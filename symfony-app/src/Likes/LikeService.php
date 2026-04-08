@@ -8,7 +8,7 @@ use App\Entity\Photo;
 use App\Entity\User;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
-class LikeService
+class LikeService implements LikeServiceInterface
 {
     public function __construct(
         private LikeRepositoryInterface $likeRepository

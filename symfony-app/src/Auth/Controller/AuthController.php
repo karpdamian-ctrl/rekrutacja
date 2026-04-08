@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Auth\Controller;
 
-use App\Auth\Service\AuthService;
+use App\Auth\Service\AuthServiceInterface;
 use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +27,7 @@ class AuthController extends AppController
     }
 
     #[Route('/login', name: 'auth_login', methods: ['POST'])]
-    public function login(Request $request, AuthService $authService): Response
+    public function login(Request $request, AuthServiceInterface $authService): Response
     {
         $username = trim((string) $request->request->get('username', ''));
         $token = trim((string) $request->request->get('token', ''));
@@ -57,7 +57,7 @@ class AuthController extends AppController
     }
 
     #[Route('/logout', name: 'logout', methods: ['POST'])]
-    public function logout(Request $request, AuthService $authService): Response
+    public function logout(Request $request, AuthServiceInterface $authService): Response
     {
         if (!$this->hasValidCsrfToken($request, self::LOGOUT_CSRF_TOKEN_ID)) {
             return new Response($this->translate('security.csrf.invalid'), Response::HTTP_FORBIDDEN);

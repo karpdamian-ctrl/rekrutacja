@@ -3,7 +3,11 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Auth\Service\AuthServiceInterface: '@App\Auth\Service\AuthService'
     App\Likes\LikeRepositoryInterface: '@App\Likes\LikeRepository'
+    App\Likes\LikeServiceInterface: '@App\Likes\LikeService'
+    App\Photo\Repository\PhotoRepositoryInterface: '@App\Photo\Repository\PhotoRepository'
+    App\Photo\Service\PhotoReactionServiceInterface: '@App\Photo\Service\PhotoReactionService'
 
     App\:
         resource: '../src/'

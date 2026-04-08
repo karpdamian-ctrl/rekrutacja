@@ -9,7 +9,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class AuthService
+class AuthService implements AuthServiceInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager
