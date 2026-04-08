@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Profile\Controller;
 
+use App\Photo\Service\PhoenixPhotoImportRateLimitException;
 use App\Photo\Service\PhoenixPhotoImportServiceInterface;
 use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
@@ -89,6 +90,10 @@ class ProfileController extends AppController
 
         try {
             $result = $phoenixPhotoImportService->import($user);
+        } catch (PhoenixPhotoImportRateLimitException) {
+            $this->addFlash('error', $this->translate('profile.import.rate_limited'));
+
+            return $this->redirectToRoute('profile');
         } catch (\RuntimeException) {
             $this->addFlash('error', $this->translate('profile.import.failed'));
 

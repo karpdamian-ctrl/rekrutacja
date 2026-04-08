@@ -47,6 +47,10 @@ final class PhoenixPhotoImportService implements PhoenixPhotoImportServiceInterf
             return PhoenixPhotoImportResult::invalidToken();
         }
 
+        if ($response->getStatusCode() === 429) {
+            throw new PhoenixPhotoImportRateLimitException('Phoenix API import rate limit exceeded.');
+        }
+
         if ($response->getStatusCode() !== 200) {
             throw new \RuntimeException(sprintf('Unexpected Phoenix API status: %d', $response->getStatusCode()));
         }

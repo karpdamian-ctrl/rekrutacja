@@ -6,6 +6,7 @@ defmodule PhoenixApi.Application do
     children = [
       PhoenixApi.Repo,
       {Phoenix.PubSub, name: PhoenixApi.PubSub},
+      PhoenixApi.RateLimit.PhotoImportLimiter,
       PhoenixApiWeb.Endpoint,
       {Finch, name: PhoenixApiFinch}
     ]

@@ -20,6 +20,7 @@ defmodule PhoenixApiWeb.PhotoController do
   ]
 
   plug(PhoenixApiWeb.Plugs.Authenticate)
+  plug(PhoenixApiWeb.Plugs.RateLimitPhotoImports)
 
   def index(conn, params) do
     current_user = conn.assigns.current_user

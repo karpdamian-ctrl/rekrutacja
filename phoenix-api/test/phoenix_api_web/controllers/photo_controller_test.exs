@@ -4,8 +4,11 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
   alias PhoenixApi.Repo
   alias PhoenixApi.Accounts.User
   alias PhoenixApi.Media.Photo
+  alias PhoenixApi.RateLimit.PhotoImportLimiter
 
   setup do
+    :ok = PhotoImportLimiter.reset!()
+
     taken_at = DateTime.from_naive!(~N[2026-04-08 20:15:00], "Etc/UTC")
 
     user =
@@ -172,6 +175,27 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
              }
     end
 
+    test "unauthorized requests do not consume rate limit", %{conn: conn} do
+      :ok = PhotoImportLimiter.reset!(user_limit: 1, global_limit: 100)
+
+      conn =
+        conn
+        |> put_req_header("access-token", "invalid_token")
+        |> get("/api/photos")
+
+      assert json_response(conn, 401) == %{
+               "errors" => %{"detail" => "Unauthorized"}
+             }
+
+      conn =
+        conn
+        |> recycle()
+        |> put_req_header("access-token", "valid_test_token_123")
+        |> get("/api/photos")
+
+      assert %{"photos" => _photos} = json_response(conn, 200)
+    end
+
     test "different users see only their own photos", %{conn: conn} do
       conn =
         conn
@@ -182,6 +206,89 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
       assert length(response["photos"]) == 1
       assert Enum.at(response["photos"], 0)["photo_url"] == "https://example.com/photo3.jpg"
       assert Enum.at(response["photos"], 0)["camera"] == "Nikon Z6"
+    end
+
+    test "returns 429 when user exceeds import limit", %{conn: conn} do
+      :ok = PhotoImportLimiter.reset!(user_limit: 2, global_limit: 100)
+
+      conn
+      |> put_req_header("access-token", "valid_test_token_123")
+      |> get("/api/photos")
+      |> json_response(200)
+
+      conn
+      |> recycle()
+      |> put_req_header("access-token", "valid_test_token_123")
+      |> get("/api/photos")
+      |> json_response(200)
+
+      conn =
+        conn
+        |> recycle()
+        |> put_req_header("access-token", "valid_test_token_123")
+        |> get("/api/photos")
+
+      assert json_response(conn, 429) == %{
+               "errors" => %{"detail" => "Photo import rate limit exceeded"}
+             }
+    end
+
+    test "per-user limit is independent for each user", %{conn: conn} do
+      :ok = PhotoImportLimiter.reset!(user_limit: 1, global_limit: 100)
+
+      conn
+      |> put_req_header("access-token", "valid_test_token_123")
+      |> get("/api/photos")
+      |> json_response(200)
+
+      blocked_conn =
+        conn
+        |> recycle()
+        |> put_req_header("access-token", "valid_test_token_123")
+        |> get("/api/photos")
+
+      assert json_response(blocked_conn, 429) == %{
+               "errors" => %{"detail" => "Photo import rate limit exceeded"}
+             }
+
+      other_user_conn =
+        conn
+        |> recycle()
+        |> put_req_header("access-token", "other_user_token_456")
+        |> get("/api/photos")
+
+      assert %{"photos" => [_photo]} = json_response(other_user_conn, 200)
+    end
+
+    test "returns 429 when global import limit is exceeded", %{conn: conn} do
+      :ok = PhotoImportLimiter.reset!(user_limit: 10, global_limit: 3)
+
+      conn
+      |> put_req_header("access-token", "valid_test_token_123")
+      |> get("/api/photos")
+      |> json_response(200)
+
+      conn
+      |> recycle()
+      |> put_req_header("access-token", "other_user_token_456")
+      |> get("/api/photos")
+      |> json_response(200)
+
+      conn
+      |> recycle()
+      |> put_req_header("access-token", "valid_test_token_123")
+      |> get("/api/photos")
+      |> json_response(200)
+
+      conn =
+        conn
+        |> recycle()
+        |> put_req_header("access-token", "other_user_token_456")
+        |> get("/api/photos")
+
+      assert json_response(conn, 429) == %{
+               "errors" => %{"detail" => "Photo import rate limit exceeded"}
+             }
     end
   end
 end
