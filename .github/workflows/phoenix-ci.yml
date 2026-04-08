@@ -193,6 +193,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./phoenix-api/cover/excoveralls.json
           flags: phoenix
+          disable_search: true
 
   phoenix-dialyzer:
     name: Phoenix Dialyzer

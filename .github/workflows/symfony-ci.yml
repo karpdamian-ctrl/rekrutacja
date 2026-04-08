@@ -111,6 +111,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./symfony-app/coverage.xml
           flags: symfony
+          disable_search: true
 
   symfony-phpstan:
     name: Symfony PHPStan
