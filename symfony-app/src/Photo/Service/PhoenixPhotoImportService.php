@@ -48,15 +48,19 @@ final class PhoenixPhotoImportService implements PhoenixPhotoImportServiceInterf
         }
 
         if ($response->getStatusCode() === 429) {
-            /** @var array{errors?: array{detail?: string}} $payload */
+            /** @var array{errors?: array{code?: string, detail?: string}} $payload */
             $payload = $response->toArray(false);
-            $detail = $payload['errors']['detail'] ?? null;
+            $code = $payload['errors']['code'] ?? null;
 
-            throw new PhoenixPhotoImportRateLimitException(
-                $detail === 'Photo import global rate limit exceeded'
-                    ? 'profile.import.rate_limited_global'
-                    : 'profile.import.rate_limited_user'
-            );
+            if ($code === 'user_rate_limit_exceeded') {
+                throw new PhoenixPhotoImportRateLimitException('profile.import.rate_limited_user');
+            }
+
+            if ($code === 'global_rate_limit_exceeded') {
+                throw new PhoenixPhotoImportRateLimitException('profile.import.rate_limited_global');
+            }
+
+            throw new \RuntimeException('Unexpected Phoenix API rate limit error code.');
         }
 
         if ($response->getStatusCode() !== 200) {

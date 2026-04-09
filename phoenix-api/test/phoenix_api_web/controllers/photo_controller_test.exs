@@ -229,7 +229,10 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
         |> get("/api/photos")
 
       assert json_response(conn, 429) == %{
-               "errors" => %{"detail" => "Photo import user rate limit exceeded"}
+               "errors" => %{
+                 "code" => "user_rate_limit_exceeded",
+                 "detail" => "Photo import user rate limit exceeded"
+               }
              }
     end
 
@@ -248,7 +251,10 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
         |> get("/api/photos")
 
       assert json_response(blocked_conn, 429) == %{
-               "errors" => %{"detail" => "Photo import user rate limit exceeded"}
+               "errors" => %{
+                 "code" => "user_rate_limit_exceeded",
+                 "detail" => "Photo import user rate limit exceeded"
+               }
              }
 
       other_user_conn =
@@ -287,7 +293,10 @@ defmodule PhoenixApiWeb.PhotoControllerTest do
         |> get("/api/photos")
 
       assert json_response(conn, 429) == %{
-               "errors" => %{"detail" => "Photo import global rate limit exceeded"}
+               "errors" => %{
+                 "code" => "global_rate_limit_exceeded",
+                 "detail" => "Photo import global rate limit exceeded"
+               }
              }
     end
   end

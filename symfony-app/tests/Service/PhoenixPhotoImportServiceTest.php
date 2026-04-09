@@ -190,7 +190,12 @@ final class PhoenixPhotoImportServiceTest extends TestCase
 
         $httpClient = new MockHttpClient([
             new MockResponse(
-                json_encode(['errors' => ['detail' => 'Photo import user rate limit exceeded']], JSON_THROW_ON_ERROR),
+                json_encode([
+                    'errors' => [
+                        'code' => 'user_rate_limit_exceeded',
+                        'detail' => 'Photo import user rate limit exceeded',
+                    ],
+                ], JSON_THROW_ON_ERROR),
                 ['http_code' => 429]
             ),
         ]);
@@ -219,7 +224,12 @@ final class PhoenixPhotoImportServiceTest extends TestCase
 
         $httpClient = new MockHttpClient([
             new MockResponse(
-                json_encode(['errors' => ['detail' => 'Photo import global rate limit exceeded']], JSON_THROW_ON_ERROR),
+                json_encode([
+                    'errors' => [
+                        'code' => 'global_rate_limit_exceeded',
+                        'detail' => 'Photo import global rate limit exceeded',
+                    ],
+                ], JSON_THROW_ON_ERROR),
                 ['http_code' => 429]
             ),
         ]);
