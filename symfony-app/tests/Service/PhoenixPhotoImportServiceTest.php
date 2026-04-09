@@ -6,7 +6,7 @@ namespace App\Tests\Service;
 
 use App\Entity\Photo;
 use App\Entity\User;
-use App\Photo\Service\PhoenixPhotoImportRateLimitException;
+use App\Photo\Exception\PhoenixPhotoImportRateLimitException;
 use App\Photo\Service\PhoenixPhotoImportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;

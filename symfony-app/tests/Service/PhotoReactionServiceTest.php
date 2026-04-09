@@ -6,7 +6,6 @@ namespace App\Tests\Service;
 
 use App\Entity\Photo;
 use App\Entity\User;
-use App\Likes\DuplicateLikeException;
 use App\Likes\LikeRepositoryInterface;
 use App\Photo\Service\PhotoReactionService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -105,42 +104,13 @@ final class PhotoReactionServiceTest extends TestCase
         self::assertSame(2, $result->getPhoto()?->getLikeCounter());
     }
 
-    public function testLikeReturnsAlreadyLikedWhenDuplicateLikeExceptionIsThrown(): void
+    public function testLikeReturnsAlreadyLikedWhenUniqueConstraintViolationIsThrown(): void
     {
         $photo = $this->createPhoto(13);
         $user = $this->createUser();
 
         $photoRepository = $this->createMock(ObjectRepository::class);
         $photoRepository->method('find')->with(13)->willReturn($photo);
-
-        $entityManager = $this->mockEntityManagerForPhotoRepository($photoRepository);
-        $likeRepository = $this->createMock(LikeRepositoryInterface::class);
-        $likeRepository
-            ->expects(self::once())
-            ->method('hasUserLikedPhoto')
-            ->willReturn(false);
-
-        $likeRepository
-            ->expects(self::once())
-            ->method('createLike')
-            ->willThrowException(new DuplicateLikeException());
-        $likeRepository->expects(self::never())->method('updatePhotoCounter');
-
-        $service = new PhotoReactionService($entityManager, $likeRepository);
-
-        $result = $service->like($user, 13);
-
-        self::assertSame('noop', $result->getStatus());
-        self::assertSame('photo.reaction.already_liked', $result->getMessageKey());
-    }
-
-    public function testLikeReturnsAlreadyLikedWhenUniqueConstraintViolationIsThrown(): void
-    {
-        $photo = $this->createPhoto(14);
-        $user = $this->createUser();
-
-        $photoRepository = $this->createMock(ObjectRepository::class);
-        $photoRepository->method('find')->with(14)->willReturn($photo);
 
         $entityManager = $this->mockEntityManagerForPhotoRepository($photoRepository);
         $likeRepository = $this->createMock(LikeRepositoryInterface::class);
@@ -156,7 +126,7 @@ final class PhotoReactionServiceTest extends TestCase
 
         $service = new PhotoReactionService($entityManager, $likeRepository);
 
-        $result = $service->like($user, 14);
+        $result = $service->like($user, 13);
 
         self::assertSame('noop', $result->getStatus());
         self::assertSame('photo.reaction.already_liked', $result->getMessageKey());

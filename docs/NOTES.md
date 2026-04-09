@@ -48,6 +48,7 @@ Z treści zadania wynika dla mnie, że istotne jest nie tylko końcowe rozwiąza
 - Po napisaniu działającej wersji aplikacji zrobiłem sobie kilka godzin przerwy, a potem wróciłem do projektu z nastawieniem na własny przegląd kodu. Traktuję ten etap jako wewnętrzny code review po czasie, bo właśnie wtedy najłatwiej zauważyć rzeczy, które umknęły w trakcie intensywnej implementacji.
 - Pierwszy wychwycony problem dotyczył encji `Like`, która została w `src/Likes` zamiast trafić razem z pozostałymi encjami do `src/Entity`. Porządkuję to i przenoszę ją do właściwego miejsca, żeby struktura projektu była spójna.
 - Zauważyłem też zbędną komplikację w warstwie obsługi reakcji na zdjęcia. `LikeService` dublował część odpowiedzialności `PhotoReactionService`, a przy tym wprowadzał niesymetryczny przepływ między `like` i `unlike`, więc uprościłem ten obszar przez usunięcie `LikeService` i zostawienie całej logiki reakcji w jednym miejscu.
+- Przeniosłem też `PhoenixPhotoImportRateLimitException` z `src/Photo/Service` do `src/Photo/Exception`, żeby ujednolicić organizację wyjątków w module `Photo` i ułatwić dalsze utrzymanie kodu.
 
 
 ## Jak używam AI

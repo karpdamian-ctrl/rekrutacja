@@ -6,6 +6,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Photo;
 use App\Entity\User;
+use App\Photo\Exception\PhoenixPhotoImportRateLimitException;
 use App\Photo\Service\PhoenixPhotoImportResult;
 use App\Photo\Service\PhoenixPhotoImportServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -253,7 +254,7 @@ final class ProfileControllerTest extends WebTestCase
         $this->replaceImportService(new class () implements PhoenixPhotoImportServiceInterface {
             public function import(User $user): PhoenixPhotoImportResult
             {
-                throw new \App\Photo\Service\PhoenixPhotoImportRateLimitException(
+                throw new PhoenixPhotoImportRateLimitException(
                     'profile.import.rate_limited_user',
                     'Rate limited.'
                 );

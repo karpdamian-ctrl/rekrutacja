@@ -6,6 +6,7 @@ namespace App\Photo\Service;
 
 use App\Entity\Photo;
 use App\Entity\User;
+use App\Photo\Exception\PhoenixPhotoImportRateLimitException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Photo\Service;
+namespace App\Photo\Exception;
 
 final class PhoenixPhotoImportRateLimitException extends \RuntimeException
 {

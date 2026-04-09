@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Profile\Controller;
 
-use App\Photo\Service\PhoenixPhotoImportRateLimitException;
+use App\Photo\Exception\PhoenixPhotoImportRateLimitException;
 use App\Photo\Service\PhoenixPhotoImportServiceInterface;
 use App\Shared\Controller\AppController;
 use Doctrine\ORM\EntityManagerInterface;
