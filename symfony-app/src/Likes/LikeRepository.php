@@ -21,7 +21,7 @@ final class LikeRepository extends ServiceEntityRepository implements LikeReposi
     }
 
     #[\Override]
-    public function unlikePhoto(User $user, Photo $photo): void
+    public function removeLike(User $user, Photo $photo): void
     {
         $em = $this->getEntityManager();
 
@@ -38,11 +38,6 @@ final class LikeRepository extends ServiceEntityRepository implements LikeReposi
 
         if ($like) {
             $em->remove($like);
-            $em->flush();
-
-            $photo->setLikeCounter($photo->getLikeCounter() - 1);
-            $em->persist($photo);
-
             $em->flush();
         }
     }
@@ -63,6 +58,30 @@ final class LikeRepository extends ServiceEntityRepository implements LikeReposi
     }
 
     #[\Override]
+    public function getLikedPhotoIdsForUser(User $user, array $photoIds): array
+    {
+        $photoIds = array_values(array_filter($photoIds, static fn (mixed $photoId): bool => is_int($photoId)));
+
+        if ($photoIds === []) {
+            return [];
+        }
+
+        $rows = $this->createQueryBuilder('l')
+            ->select('IDENTITY(l.photo) AS photoId')
+            ->where('l.user = :user')
+            ->andWhere('l.photo IN (:photoIds)')
+            ->setParameter('user', $user)
+            ->setParameter('photoIds', $photoIds)
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_values(array_map(
+            static fn (array $row): int => (int) $row['photoId'],
+            $rows
+        ));
+    }
+
+    #[\Override]
     public function createLike(User $user, Photo $photo): Like
     {
         $like = new Like();
@@ -74,14 +93,5 @@ final class LikeRepository extends ServiceEntityRepository implements LikeReposi
         $em->flush();
 
         return $like;
-    }
-
-    #[\Override]
-    public function updatePhotoCounter(Photo $photo, int $increment): void
-    {
-        $em = $this->getEntityManager();
-        $photo->setLikeCounter($photo->getLikeCounter() + $increment);
-        $em->persist($photo);
-        $em->flush();
     }
 }

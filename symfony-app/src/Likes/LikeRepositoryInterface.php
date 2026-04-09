@@ -10,11 +10,15 @@ use App\Entity\User;
 
 interface LikeRepositoryInterface
 {
-    public function unlikePhoto(User $user, Photo $photo): void;
+    public function removeLike(User $user, Photo $photo): void;
 
     public function hasUserLikedPhoto(User $user, Photo $photo): bool;
 
-    public function createLike(User $user, Photo $photo): Like;
+    /**
+     * @param array<int, int|null> $photoIds
+     * @return array<int, int>
+     */
+    public function getLikedPhotoIdsForUser(User $user, array $photoIds): array;
 
-    public function updatePhotoCounter(Photo $photo, int $increment): void;
+    public function createLike(User $user, Photo $photo): Like;
 }

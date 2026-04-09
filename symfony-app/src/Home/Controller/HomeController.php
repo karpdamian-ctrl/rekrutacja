@@ -44,8 +44,20 @@ class HomeController extends AppController
         $userLikes = [];
 
         if ($currentUser) {
+            $photoIds = array_map(
+                static fn (\App\Entity\Photo $photo): ?int => $photo->getId(),
+                $photos
+            );
+            $likedPhotoIds = $likeRepository->getLikedPhotoIdsForUser($currentUser, $photoIds);
+            $likedPhotoIdLookup = array_fill_keys($likedPhotoIds, true);
+
             foreach ($photos as $photo) {
-                $userLikes[$photo->getId()] = $likeRepository->hasUserLikedPhoto($currentUser, $photo);
+                $photoId = $photo->getId();
+                if ($photoId === null) {
+                    continue;
+                }
+
+                $userLikes[$photoId] = isset($likedPhotoIdLookup[$photoId]);
             }
         }
 

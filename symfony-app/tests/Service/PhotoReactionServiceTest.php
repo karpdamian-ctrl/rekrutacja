@@ -11,6 +11,7 @@ use App\Photo\Service\PhotoReactionService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class PhotoReactionServiceTest extends TestCase
@@ -51,7 +52,9 @@ final class PhotoReactionServiceTest extends TestCase
             ->willReturn(true);
 
         $likeRepository->expects(self::never())->method('createLike');
-        $likeRepository->expects(self::never())->method('updatePhotoCounter');
+        $likeRepository->expects(self::never())->method('removeLike');
+        $entityManager->expects(self::never())->method('persist');
+        $entityManager->expects(self::never())->method('flush');
 
         $service = new PhotoReactionService($entityManager, $likeRepository);
 
@@ -85,14 +88,15 @@ final class PhotoReactionServiceTest extends TestCase
             ->method('createLike')
             ->with($user, $photo)
             ->willReturn($this->createMock(\App\Entity\Like::class));
-        $likeRepository
+        $likeRepository->expects(self::never())->method('removeLike');
+        $entityManager
             ->expects(self::once())
-            ->method('updatePhotoCounter')
-            ->with($photo, 1)
-            ->willReturnCallback(static function (Photo $photo, int $increment): void {
-                self::assertSame(1, $increment);
-                $photo->setLikeCounter($photo->getLikeCounter() + 1);
+            ->method('persist')
+            ->with($photo)
+            ->willReturnCallback(static function (Photo $photo): void {
+                self::assertSame(2, $photo->getLikeCounter());
             });
+        $entityManager->expects(self::once())->method('flush');
 
         $service = new PhotoReactionService($entityManager, $likeRepository);
 
@@ -122,7 +126,9 @@ final class PhotoReactionServiceTest extends TestCase
             ->expects(self::once())
             ->method('createLike')
             ->willThrowException($this->createUniqueConstraintViolationException());
-        $likeRepository->expects(self::never())->method('updatePhotoCounter');
+        $likeRepository->expects(self::never())->method('removeLike');
+        $entityManager->expects(self::never())->method('persist');
+        $entityManager->expects(self::never())->method('flush');
 
         $service = new PhotoReactionService($entityManager, $likeRepository);
 
@@ -143,6 +149,10 @@ final class PhotoReactionServiceTest extends TestCase
 
         $entityManager = $this->mockEntityManagerForPhotoRepository($photoRepository);
         $likeRepository = $this->createMock(LikeRepositoryInterface::class);
+        $likeRepository->expects(self::never())->method('createLike');
+        $likeRepository->expects(self::never())->method('removeLike');
+        $entityManager->expects(self::never())->method('persist');
+        $entityManager->expects(self::never())->method('flush');
         $service = new PhotoReactionService($entityManager, $likeRepository);
 
         $result = $service->unlike($this->createUser(), 77);
@@ -165,10 +175,11 @@ final class PhotoReactionServiceTest extends TestCase
             ->method('hasUserLikedPhoto')
             ->with($user, $photo)
             ->willReturn(false);
-        $likeRepository->expects(self::never())->method('unlikePhoto');
+        $likeRepository->expects(self::never())->method('removeLike');
 
         $likeRepository->expects(self::never())->method('createLike');
-        $likeRepository->expects(self::never())->method('updatePhotoCounter');
+        $entityManager->expects(self::never())->method('persist');
+        $entityManager->expects(self::never())->method('flush');
         $service = new PhotoReactionService($entityManager, $likeRepository);
 
         $result = $service->unlike($user, 20);
@@ -196,14 +207,18 @@ final class PhotoReactionServiceTest extends TestCase
             ->willReturn(true);
         $likeRepository
             ->expects(self::once())
-            ->method('unlikePhoto')
-            ->with($user, $photo)
-            ->willReturnCallback(static function (User $user, Photo $photo): void {
-                $photo->setLikeCounter($photo->getLikeCounter() - 1);
-            });
+            ->method('removeLike')
+            ->with($user, $photo);
 
         $likeRepository->expects(self::never())->method('createLike');
-        $likeRepository->expects(self::never())->method('updatePhotoCounter');
+        $entityManager
+            ->expects(self::once())
+            ->method('persist')
+            ->with($photo)
+            ->willReturnCallback(static function (Photo $photo): void {
+                self::assertSame(1, $photo->getLikeCounter());
+            });
+        $entityManager->expects(self::once())->method('flush');
         $service = new PhotoReactionService($entityManager, $likeRepository);
 
         $result = $service->unlike($user, 21);
@@ -216,9 +231,11 @@ final class PhotoReactionServiceTest extends TestCase
 
     /**
      * @param ObjectRepository<Photo> $photoRepository
+     * @return EntityManagerInterface&MockObject
      */
     private function mockEntityManagerForPhotoRepository(ObjectRepository $photoRepository): EntityManagerInterface
     {
+        /** @var EntityManagerInterface&MockObject $entityManager */
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager
             ->expects(self::once())

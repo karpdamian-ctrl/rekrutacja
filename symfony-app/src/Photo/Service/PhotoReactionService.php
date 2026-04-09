@@ -31,7 +31,7 @@ class PhotoReactionService implements PhotoReactionServiceInterface
 
         try {
             $this->likeRepository->createLike($user, $photo);
-            $this->likeRepository->updatePhotoCounter($photo, 1);
+            $this->changePhotoLikeCounter($photo, 1);
         } catch (UniqueConstraintViolationException) {
             return PhotoReactionResult::alreadyLiked($photo);
         }
@@ -50,9 +50,17 @@ class PhotoReactionService implements PhotoReactionServiceInterface
             return PhotoReactionResult::notLikedYet($photo);
         }
 
-        $this->likeRepository->unlikePhoto($user, $photo);
+        $this->likeRepository->removeLike($user, $photo);
+        $this->changePhotoLikeCounter($photo, -1);
 
         return PhotoReactionResult::unliked($photo);
+    }
+
+    private function changePhotoLikeCounter(Photo $photo, int $increment): void
+    {
+        $photo->setLikeCounter($photo->getLikeCounter() + $increment);
+        $this->entityManager->persist($photo);
+        $this->entityManager->flush();
     }
 
     private function findPhoto(int $photoId): ?Photo

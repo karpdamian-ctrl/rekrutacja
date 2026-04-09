@@ -51,6 +51,8 @@ Z treści zadania wynika dla mnie, że istotne jest nie tylko końcowe rozwiąza
 - Przeniosłem też `PhoenixPhotoImportRateLimitException` z `src/Photo/Service` do `src/Photo/Exception`, żeby ujednolicić organizację wyjątków w module `Photo` i ułatwić dalsze utrzymanie kodu.
 - Uporządkowałem też architekturę PhoenixApi, dodając contexty `Accounts` i `Media` oraz przepinając na nie kontroler i plugi. Dzięki temu warstwa web nie odwołuje się już bezpośrednio do `Repo`, schem i limitera, tylko korzysta ze spójnego API modułów domenowych.
 - Do tego dopisałem testy dla nowych funkcji contextów, żeby zabezpieczyć ten refaktor.
+- Po kolejnym przeglądzie Symfony poprawiłem też warstwę lajków. Usunąłem zbędne mieszanie odpowiedzialności w `LikeRepository`, tak aby repozytorium zajmowało się już tylko rekordami `Like`, a aktualizacja licznika po stronie `Photo` została w `PhotoReactionService`.
+- Przy okazji poprawiłem też wydajność strony głównej, zastępując sprawdzanie lajków w pętli jednym zbiorczym zapytaniem o polubione zdjęcia zalogowanego użytkownika.
 
 
 ## Jak używam AI
