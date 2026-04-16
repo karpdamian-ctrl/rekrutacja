@@ -39,6 +39,8 @@ photo:
         taken_at_from: 'Taken from'
         taken_at_to: 'Taken to'
         invalid_date: 'Invalid date format. Use YYYY-MM-DD or YYYY-MM-DD HH:mm.'
+        invalid_length: 'One or more filter values are too long.'
+        invalid_value: 'One or more filter values are invalid.'
         username: 'Username'
         submit: 'Apply filters'
         reset: 'Clear filters'

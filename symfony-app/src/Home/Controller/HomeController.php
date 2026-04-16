@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Home\Controller;
 
+use App\Home\Dto\PhotoFilterDto;
 use App\Likes\LikeRepositoryInterface;
 use App\Photo\Exception\InvalidPhotoFilterException;
 use App\Photo\Repository\PhotoRepositoryInterface;
@@ -12,6 +13,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class HomeController extends AppController
 {
@@ -22,22 +27,23 @@ class HomeController extends AppController
         Request $request,
         EntityManagerInterface $em,
         PhotoRepositoryInterface $photoRepository,
-        LikeRepositoryInterface $likeRepository
+        LikeRepositoryInterface $likeRepository,
+        ValidatorInterface $validator
     ): Response {
-        $filters = [
-            'location' => $this->normalizeFilterValue($request->query->get('location')),
-            'camera' => $this->normalizeFilterValue($request->query->get('camera')),
-            'description' => $this->normalizeFilterValue($request->query->get('description')),
-            'taken_at_from' => $this->normalizeFilterValue($request->query->get('taken_at_from')),
-            'taken_at_to' => $this->normalizeFilterValue($request->query->get('taken_at_to')),
-            'username' => $this->normalizeFilterValue($request->query->get('username')),
-        ];
+        $filterDto = PhotoFilterDto::fromRequest($request);
+        $filters = $filterDto->toRepositoryFilters();
+        $violations = $validator->validate($filterDto);
 
-        try {
-            $photos = $photoRepository->findAllWithUsers($filters);
-        } catch (InvalidPhotoFilterException) {
-            $this->addFlash('error', $this->translate('photo.filters.invalid_date'));
+        if (\count($violations) > 0) {
+            $this->addFilterValidationErrors($violations);
             $photos = [];
+        } else {
+            try {
+                $photos = $photoRepository->findAllWithUsers($filters);
+            } catch (InvalidPhotoFilterException) {
+                $this->addFlash('error', $this->translate('photo.filters.invalid_date'));
+                $photos = [];
+            }
         }
 
         $currentUser = $this->resolveCurrentUser($request, $em, true);
@@ -69,14 +75,32 @@ class HomeController extends AppController
         ]);
     }
 
-    private function normalizeFilterValue(mixed $value): ?string
+    private function addFilterValidationErrors(ConstraintViolationListInterface $violations): void
     {
-        if (!\is_string($value)) {
-            return null;
+        $errorTranslationKeys = [];
+
+        foreach ($violations as $violation) {
+            $constraint = $violation->getConstraint();
+            $propertyPath = $violation->getPropertyPath();
+
+            if (
+                $constraint instanceof Regex
+                && \in_array($propertyPath, ['takenAtFrom', 'takenAtTo'], true)
+            ) {
+                $errorTranslationKeys['photo.filters.invalid_date'] = true;
+                continue;
+            }
+
+            if ($constraint instanceof Length) {
+                $errorTranslationKeys['photo.filters.invalid_length'] = true;
+                continue;
+            }
+
+            $errorTranslationKeys['photo.filters.invalid_value'] = true;
         }
 
-        $trimmedValue = trim($value);
-
-        return $trimmedValue === '' ? null : $trimmedValue;
+        foreach (array_keys($errorTranslationKeys) as $errorTranslationKey) {
+            $this->addFlash('error', $this->translate($errorTranslationKey));
+        }
     }
 }

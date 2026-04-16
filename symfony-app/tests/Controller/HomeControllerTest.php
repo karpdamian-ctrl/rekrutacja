@@ -408,6 +408,35 @@ final class HomeControllerTest extends WebTestCase
         self::assertSame('2026', $crawler->filter('#filter-taken-at-from')->attr('value'));
     }
 
+    public function testInvalidTakenAtToFormatShowsErrorAndNoPhotos(): void
+    {
+        [, $photo] = $this->createUserAndPhoto();
+
+        $crawler = $this->client->request('GET', '/', [
+            'taken_at_to' => '2026-99-99',
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Invalid date format. Use YYYY-MM-DD or YYYY-MM-DD HH:mm.', (string) $this->client->getResponse()->getContent());
+        self::assertCount(0, $crawler->filter(sprintf('img[src="%s"]', $photo->getImageUrl())));
+        self::assertCount(1, $crawler->filter('.empty-state'));
+        self::assertSame('2026-99-99', $crawler->filter('#filter-taken-at-to')->attr('value'));
+    }
+
+    public function testTooLongTextFilterShowsLengthErrorAndNoPhotos(): void
+    {
+        [, $photo] = $this->createUserAndPhoto();
+
+        $crawler = $this->client->request('GET', '/', [
+            'location' => str_repeat('a', 256),
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('One or more filter values are too long.', (string) $this->client->getResponse()->getContent());
+        self::assertCount(0, $crawler->filter(sprintf('img[src="%s"]', $photo->getImageUrl())));
+        self::assertCount(1, $crawler->filter('.empty-state'));
+    }
+
     /**
      * @return array{0: User, 1: Photo}
      */
