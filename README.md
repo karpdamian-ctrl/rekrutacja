@@ -76,7 +76,8 @@ docker compose exec phoenix mix run priv/repo/seeds.exs
 Access:
 
 - Symfony App: http://localhost:8000
-- Phoenix API: http://localhost:4000
+- Phoenix API base URL: http://localhost:4000
+- Phoenix API endpoint: http://localhost:4000/api/photos (the root path `/` is not an exposed UI page)
 
 ## How to Use After Setup
 
